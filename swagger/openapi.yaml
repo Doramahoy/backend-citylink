@@ -1,0 +1,1416 @@
+openapi: 3.0.0
+info:
+  title: CityLink
+  version: 0.0.1
+servers:
+  - url: http://localhost:4000/api
+    description: Dev server
+    
+paths:
+  /user/signup:
+    post:
+      summary: Регистрация пользователя
+      tags: 
+        - User
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                firstName:
+                  description: Имя пользователя
+                  type: string
+                  example: Иван
+                lastName:
+                  description: Фамилия пользователя
+                  type: string
+                  example: Иванов
+                phoneNumber:
+                  description: Номер телефона пользователя
+                  type: string
+                  example: 79881233223
+                password:
+                  description: Пароль пользователя
+                  type: string
+                  example: 12345qwe
+              required:
+                - firstName
+                - lastName
+                - phoneNumber
+                - password
+              
+      responses:
+        '200':
+          description: Успешная регистрация
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  token:
+                    description: JWT токен авторизированного пользователя
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                    
+  /user/login:
+    post:
+      summary: Авторизация пользователя
+      tags: 
+        - User
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  description: Номер телефона пользователя
+                  type: string
+                  example: 79881233223
+                password:
+                  description: Пароль пользователя
+                  type: string
+                  example: 12345qwe
+              required:
+                - phoneNumber
+                - password
+              
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  token:
+                    description: JWT токен авторизированного пользователя
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+                  role:
+                    description: Роль пользователя (user или admin)
+                    type: string
+                    example: user
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /user/auth:
+    get:
+      summary: Обновление токена
+      tags: 
+        - User
+      operationId: upateToken
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow    
+    
+      responses:
+        '200':
+          description: Успешное обновление токена
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  token:
+                    description: JWT токен авторизированного пользователя
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+                  role:
+                    description: Роль пользователя (user или admin)
+                    type: string
+                    example: user
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /user/info:
+    get:
+      summary: Получение информации о пользователе
+      tags: 
+        - User
+      operationId: getUserInfo
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow    
+    
+      responses:
+        '200':
+          description: Успешное получение данных
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: id пользователя
+                    type: string
+                    example: 00002d49-dbc6-41cd-a8be-6e4dfb891482
+                  firstName:
+                    description: Имя пользователя
+                    type: string
+                    example: Иван
+                  lastName:
+                    description: Фамилия пользователя
+                    type: string
+                    example: Иванов
+                  middleName:
+                    description: Отчество пользователя
+                    type: string
+                    example: Иванович
+                  email:
+                    description: email пользователя
+                    type: string
+                    example: example@gmail.com                     
+                  gender:
+                    description: Пол пользователя
+                    type: boolean
+                    example: true  
+                  documentNumber:
+                    description: Паспортные данные пользователя
+                    type: string
+                    example: 1111222222
+                  birthDate:
+                    description: Дата рождения пользователя
+                    type: string
+                    example: 2024-01-02T14:35:43.000Z
+                  favouriteCity:
+                    description: Самый посещаемый город пользователем
+                    type: string
+                    example: Пятигорск
+                  favouriteCityCount:
+                    description: Количество посещений любимого города
+                    type: number
+                    example: 5
+                  ticketsAmount:
+                    description: Количество купленных билетов
+                    type: number
+                    example: 10
+                  phoneNumber:
+                    description: Номер телефона пользователя
+                    type: string
+                    example: 79881233223
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+          
+        '401':
+          description:  Ошибка авторизации
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/401"
+                    
+  /user/validateDate:
+    post:
+      summary: Проверка валидности данных
+      tags: 
+        - User
+      operationId: dataValidation
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  description: Номер телефона пользователя
+                  type: string
+                  example: 79881233223
+                email:
+                  description: email пользователя
+                  type: string
+                  example: example@gmail.com
+              required:
+                - phoneNumber
+                - email
+              
+      responses:
+        '200':
+          description: Успешная проверка данных
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  message:
+                    description: id пользователя
+                    type: string
+                    example: Request completed
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+  
+  /user/update:
+    put:
+      summary: Обновление любых данных пользователя
+      description: gender boolean, favouriteCityCount и ticketsAmount number, birthDate в формате timestamp с типом данных string, остальное string 
+      tags: 
+        - User
+      operationId: updateProfile
+      
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow 
+      
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  description: Номер телефона пользователя
+                  type: string
+                  example: 79881233223
+                email:
+                  description: email пользователя
+                  type: string
+                  example: example@gmail.com
+              required:
+                - phoneNumber
+                - email
+              
+      responses:
+        '200':
+          description: Успешное обновление данных
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Request completed
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"        
+                
+  /user/getUsers:
+    get:
+      summary: Получение списка пользователей
+      description: Будут приходить все данные, включая createdAt, кроме password. В responses лишь пример, чтобы избежать большого кода.
+      tags: 
+        - User
+      operationId: getUsers
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow    
+    
+      responses:
+        '200':
+          description: Успешное получение списка
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  users:
+                    description: Массив объектов
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /user/deleteUser:
+    delete:
+      summary: Удаление пользователя
+      tags: 
+        - User
+      operationId: deleteUser
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+        - name: id
+          in: query
+          schema:
+            type: string
+            description: id пользователя
+            example: 00002d49-dbc6-41cd-a8be-6e4dfb891482
+    
+      responses:
+        '200':
+          description: Успешное удаление пользователя
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Request completed
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"      
+          
+  /routes/getRouteRecords:
+    get:
+      summary: Получение списка доступных записанных маршрутов
+      tags: 
+        - Routes
+      operationId: getRouteRecords
+      parameters:
+        - name: departureCity
+          in: query
+          schema:
+            type: string
+            description: Город отправления
+            example: Ставрополь   
+        - name: destinationCity
+          in: query
+          schema:
+            type: string
+            description: Город прибытия
+            example: Пятигорск
+        - name: departureDate
+          in: query
+          schema:
+            type: string
+            description: Время отправления
+            example: 1704206143000(timestamp)
+    
+      responses:
+        '200':
+          description: Успешное получение списка записанных маршрутов
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  routes:
+                    description: Массив объектов
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: id записи маршрута
+                          example: 82
+                        price:
+                          type: number
+                          description: Цена билета
+                          example: 500
+                        departureDate: 
+                          type: string
+                          description: Дата отправления
+                          example: 2023-12-21T08:00:00.000Z
+                        duration:
+                          type: number
+                          description: Время в пути
+                          example: 5
+                        departureCity:
+                          type: string
+                          description: Город отправления
+                          example: Ставрополь
+                        destinationCity:
+                          type: string
+                          description: Город прибытия
+                          example: Пятигорск
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500" 
+                
+  /routes/getRoutes:
+    get:
+      summary: Получение списка маршрутов
+      tags: 
+        - Routes
+      operationId: getRoutes
+      parameters:
+        - name: departureCity
+          in: query
+          schema:
+            type: string
+            description: Город отправления
+            example: Ставрополь   
+        - name: destinationCity
+          in: query
+          schema:
+            type: string
+            description: Город прибытия
+            example: Пятигорск
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+    
+      responses:
+        '200':
+          description: Успешное получение списка маршрутов
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  routes:
+                    description: Массив объектов
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: id маршрута
+                          example: 82
+                        duration:
+                          type: number
+                          description: Время в пути
+                          example: 5
+                        departureCity:
+                          type: string
+                          description: Город отправления
+                          example: Ставрополь
+                        destinationCity:
+                          type: string
+                          description: Город прибытия
+                          example: Пятигорск
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500" 
+                
+  /routes/getCities:
+    get:
+      summary: Получение городов по названию
+      tags: 
+        - Routes
+      operationId: getCities
+      parameters:
+        - name: cityName
+          in: query
+          schema:
+            type: string
+            description: Полное или часть названия города
+            example: Ста  
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+      responses:
+        '200':
+          description: Успешное получение списка городов
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  routes:
+                    description: Массив объектов
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          description: id города
+                          example: 1
+                        cityName:
+                          type: string
+                          description: Название города
+                          example: Ставрополь
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500" 
+                
+  /routes/addRoute:
+    post:
+      summary: Добавление маршрута
+      tags: 
+        - Routes
+      operationId: addRoute
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+            
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                departureCity:
+                  description: Город отправления
+                  type: string
+                  example: Ставрополь
+                destinationCity:
+                  description: Город прибытия
+                  type: string
+                  example: Пятигорск
+                duration:
+                  description: Время в пути
+                  type: number
+                  example: 4
+              required:
+                - departureCity
+                - destinationCity
+                - duration
+      responses:
+        '200':
+          description: Успешное добавление города
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: id маршрута
+                    type: number
+                    example: 10
+                  duration:
+                    description: Время в пути
+                    type: number
+                    example: 5
+                  departureCityId:
+                    description: id города отправления
+                    type: number
+                    example: 4
+                  destinationCityId:
+                    description: id города прибытия
+                    type: number
+                    example: 7
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500" 
+                
+  /routes/addRouteRecord:
+    post:
+      summary: Добавление записанного маршрута
+      tags: 
+        - Routes
+      operationId: addRouteRecord
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+            
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                departureCity:
+                  description: Город отправления
+                  type: string
+                  example: Ставрополь
+                destinationCity:
+                  description: Город прибытия
+                  type: string
+                  example: Пятигорск
+                regNumber:
+                  description: Регистрационный номер автобуса
+                  type: string
+                  example: д325мв
+                departureDate:
+                  description: Время отправления (timestamp)
+                  type: number
+                  example: 1703361600000
+                price:
+                  description: Цена билета
+                  type: number
+                  example: 500
+              required:
+                - departureCity
+                - destinationCity
+                - regNumber
+                - departureDate
+                - price
+      responses:
+        '200':
+          description: Успешное добавление записанного маршрута
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        description: id записанного маршрута
+                        type: number
+                        example: 10
+                      price:
+                        description: Цена билета
+                        type: number
+                        example: 500
+                      departureDate:
+                        description: Время отправления
+                        type: string
+                        example: 2023-12-23T20:00:05.000Z
+                      routeId:
+                        description: id маршрута
+                        type: number
+                        example: 7
+                      busId:
+                        description: id автобуса
+                        type: number
+                        example: 4
+                        
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /routes/addBus:
+    post:
+      summary: Добавление автобуса
+      tags: 
+        - Routes
+      operationId: addBus
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+            
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                model:
+                  description: Название модели автобуса
+                  type: string
+                  example: ПАЗ 320414
+                regNumber:
+                  description: Регистрационный номер автобуса
+                  type: string
+                  example: д325мв
+                seatsAmount:
+                  description: Количество мест в автобусе
+                  type: string
+                  example: 10
+              required:
+                - model
+                - regNumber
+                - seatsAmount
+      responses:
+        '200':
+          description: Успешное добавление автобуса
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        description: id автобуса
+                        type: number
+                        example: 10
+                      model:
+                        description: Модель автобуса
+                        type: string
+                        example: ПАЗ 320414
+                      regNumber:
+                        description: Регистрационный номер автобуса
+                        type: string
+                        example: д325мв
+                      seatsAmount:
+                        description: Количество мест в автобусе
+                        type: number
+                        example: 10
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /routes/addCity:
+    post:
+      summary: Добавление города
+      tags: 
+        - Routes
+      operationId: addCity
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+            
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                cityName:
+                  description: Название города
+                  type: string
+                  example: Ставрополь
+              required:
+                - cityName
+      responses:
+        '200':
+          description: Успешное добавление города
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        description: id города
+                        type: number
+                        example: 10
+                      cityName:
+                        description: Название города
+                        type: string
+                        example: Ставрополь
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /routes/delete:
+    delete:
+      summary: Удаление города/маршрута/записанного маршрута
+      description: Разрешена отправка одного из параметров cityId || routeId || recordId
+      tags: 
+        - Routes
+      operationId: delete
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWo
+        - name: cityId
+          in: query
+          schema:
+            type: string
+            description: id города
+            example: 3
+        - name: routeId
+          in: query
+          schema:
+            type: string
+            description: id маршрута
+            example: 3
+        - name: recordId
+          in: query
+          schema:
+            type: string
+            description: id записанного маршрута
+            example: 3
+            
+      responses:
+        '200':
+          description: Успешное удаление
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Request completed
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /routes/update:
+    put:
+      summary: Обновление данных о городе/маршруте/записанном маршруте
+      description: Разрешена отправка одного из cityId || routeId || recordId и причастных к выбранной таблице полей в теле запроса
+      tags: 
+        - Routes
+      operationId: update
+      
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow 
+      
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                cityId:
+                  description: id города
+                  type: number
+                  example: 4
+                cityName:
+                  description: Название города
+                  type: string
+                  example: Ставрополь
+              
+      responses:
+        '200':
+          description: Успешное обновление данных
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Request completed
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+  /tickets/addTicket:
+    post:
+      summary: Добавление/Покупка билета
+      tags: 
+        - Tickets
+      operationId: addTicket
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+            
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                id:
+                  description: id записанного маршрута
+                  type: number
+                  example: 1
+              required:
+                - id
+      responses:
+        '200':
+          description: Успешное добавление билета
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  ticket:
+                    type: object
+                    properties:
+                      id:
+                        description: id билета
+                        type: string
+                        example: 6141c719-7b67-4228-bff1-312b07816415
+                      recordId:
+                        description: id записанного маршрута
+                        type: number
+                        example: 1
+                      passengerId:
+                        description: id пользователя
+                        type: string
+                        example: 3a89d97c-54dc-45a1-9ad5-f797f931bcf5
+                      seatNo:
+                        description: Номер места в автобусе
+                        type: number
+                        example: 3
+                      updatedAt:
+                        description: Дата последнего обновления данных билета
+                        type: string
+                        example: 2024-01-22T21:11:49.546Z
+                      createdAt:
+                        description: Дата создания билета
+                        type: string
+                        example: 2024-01-22T21:11:49.546Z
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+              
+  /tickets/getUserTickets:
+    get:
+      summary: Получение списка купленных билетов пользователя
+      tags: 
+        - Tickets
+      operationId: getUserTickets
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+            
+      responses:
+        '200':
+          description: Успешное получение списка купленных билетов пользователя
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  tickets:
+                    description: Массив объектов
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: id билета
+                          example: b55dc887-d36e-4e1a-8101-3c249a47698a
+                        seatNo:
+                          type: number
+                          description: Место в автобусе
+                          example: 3
+                        price:
+                          type: number
+                          description: Цена билета
+                          example: 500
+                        duration:
+                          type: number
+                          description: Время в пути
+                          example: 5
+                        departureCity:
+                          type: string
+                          description: Город отправления
+                          example: Ставрополь
+                        destinationCity:
+                          type: string
+                          description: Город прибытия
+                          example: Пятигорск
+                        departureDate: 
+                          type: string
+                          description: Дата отправления
+                          example: 2023-12-21T08:00:00.000Z
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500" 
+                
+  /tickets/getTickets:
+    get:
+      summary: Получение списка билетов всех пользователей
+      description: Возможно получение на две даты (обязательное условие) и по желанию на определённый id пользователя
+      tags: 
+        - Tickets
+      operationId: getTickets
+      parameters:
+        - name: firstDate
+          in: query
+          schema:
+            type: string
+            description: Начальная дата
+            example: 1705622400000(timestamp) 
+        - name: secondDate
+          in: query
+          schema:
+            type: string
+            description: Конечная дата
+            example: 1705708800000(timestamp) 
+        - name: passengerId
+          in: query
+          schema:
+            type: string
+            description: id пользователя
+            example: eb38fc1d-28ad-4652-99e9-bc609a0df9ea
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+    
+      responses:
+        '200':
+          description: Успешное получение списка билетов
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  tickets:
+                    description: Массив объектов
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: id билета
+                          example: b55dc887-d36e-4e1a-8101-3c249a47698a
+                        seatNo:
+                          type: number
+                          description: Место в автобусе
+                          example: 3
+                        passengerId:
+                          type: string
+                          description: id пользователя
+                          example: eb38fc1d-28ad-4652-99e9-bc609a0df9ea
+                        price:
+                          type: number
+                          description: Цена билета
+                          example: 500
+                        departureDate: 
+                          type: string
+                          description: Дата отправления
+                          example: 2023-12-23T20:00:00.000Z
+                        duration:
+                          type: number
+                          description: Время в пути
+                          example: 5
+                        departureCity:
+                          type: string
+                          description: Город отправления
+                          example: Ставрополь
+                        destinationCity:
+                          type: string
+                          description: Город прибытия
+                          example: Пятигорск
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500" 
+                
+  /tickets/deleteTicket:
+    delete:
+      summary: Удаление билета
+      tags: 
+        - Tickets
+      operationId: deleteTicket
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            description: Токен авторизации
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImViMzhmYzFkLTI4YWQtNDY1Mi05OWU5LWJjNjA5YTBkZjllYSIsImlhdCI6MTcwNTg0MzYzOSwiZXhwIjoxNzA2Mjc1NjM5fQ.Xm-cygFpoVrHMaNoiXamGnDb7_LDbGPubNnDWK6BWow
+        - name: id
+          in: query
+          schema:
+            type: string
+            description: id билета
+            example: b89a0496-5e7b-43f8-af16-f7bf07e87570
+    
+      responses:
+        '200':
+          description: Успешное удаление билета
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Request completed
+                        
+        '400':
+          description:  Ошибка в отправляемых данных
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/400"
+                
+        '500':
+          description:  Ошибка на стороне сервера
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/500"
+                
+components:
+  schemas:
+    400: 
+      description:  Ошибка в отправляемых данных
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Пример сообщения
+          
+    500:
+      description:  Ошибка на стороне сервера
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Пример сообщения
+    
+    401: 
+      description:  Ошибка авторизации
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Пример сообщения
